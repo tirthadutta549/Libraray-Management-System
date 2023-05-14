@@ -1,0 +1,129 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_BOOKS 100
+
+typedef struct {
+    int bookId;
+    char title[50];
+    char author[50];
+    int isAvailable;
+} Book;
+
+Book library[MAX_BOOKS];
+int numBooks = 0;
+
+void addBook(int bookId, const char* title, const char* author) {
+    if (numBooks >= MAX_BOOKS) {
+        printf("Library is full. Cannot add more books.\n");
+        return;
+    }
+
+    Book newBook;
+    newBook.bookId = bookId;
+    strcpy(newBook.title, title);
+    strcpy(newBook.author, author);
+    newBook.isAvailable = 1;
+
+    library[numBooks++] = newBook;
+    printf("Book added successfully.\n");
+}
+
+void borrowBook(int bookId) {
+    for (int i = 0; i < numBooks; i++) {
+        if (library[i].bookId == bookId) {
+            if (library[i].isAvailable) {
+                library[i].isAvailable = 0;
+                printf("Book borrowed successfully.\n");
+                return;
+            } else {
+                printf("Book is already borrowed.\n");
+                return;
+            }
+        }
+    }
+
+    printf("Book not found.\n");
+}
+
+void returnBook(int bookId) {
+    for (int i = 0; i < numBooks; i++) {
+        if (library[i].bookId == bookId) {
+            if (!library[i].isAvailable) {
+                library[i].isAvailable = 1;
+                printf("Book returned successfully.\n");
+                return;
+            } else {
+                printf("Book is already available.\n");
+                return;
+            }
+        }
+    }
+
+    printf("Book not found.\n");
+}
+
+void displayInventory() {
+    printf("Inventory:\n");
+    printf("----------------------------------------------------\n");
+    printf("Book ID\t\tTitle\t\tAuthor\t\tAvailability\n");
+    printf("----------------------------------------------------\n");
+
+    for (int i = 0; i < numBooks; i++) {
+        printf("%d\t\t%s\t\t%s\t\t%s\n", library[i].bookId, library[i].title, library[i].author, library[i].isAvailable ? "Available" : "Borrowed");
+    }
+
+    printf("----------------------------------------------------\n");
+}
+
+int main() {
+    int choice;
+    int bookId;
+    char title[50];
+    char author[50];
+
+    do {
+        printf("\nLibrary Management System\n");
+        printf("1. Add Book\n");
+        printf("2. Borrow Book\n");
+        printf("3. Return Book\n");
+        printf("4. Display Inventory\n");
+        printf("5. Exit\n");
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+
+        switch (choice) {
+            case 1:
+                printf("Enter book ID: ");
+                scanf("%d", &bookId);
+                printf("Enter book title: ");
+                scanf(" %[^\n]s", title);
+                printf("Enter book author: ");
+                scanf(" %[^\n]s", author);
+                addBook(bookId, title, author);
+                break;
+            case 2:
+                printf("Enter book ID: ");
+                scanf("%d", &bookId);
+                borrowBook(bookId);
+                break;
+            case 3:
+                printf("Enter book ID: ");
+                scanf("%d", &bookId);
+                returnBook(bookId);
+                break;
+            case 4:
+                displayInventory();
+                break;
+            case 5:
+                printf("Exiting the program.\n");
+                exit(0);
+            default:
+                printf("Invalid choice. Please try again.\n");
+                break;
+        }
+    } while (1);
+
+    return 0;
+}
